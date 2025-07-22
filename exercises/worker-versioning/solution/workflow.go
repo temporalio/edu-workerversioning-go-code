@@ -18,6 +18,14 @@ func LoanProcessingWorkflow(ctx workflow.Context, input CustomerInfo) (string, e
 	var totalPaid int
 	var err error
 
+	// for workflow executions started before the change, send thank you before the loop
+	// TODO B: Comment this out and uncomment the identical block below the loop
+	// var notifyConfirmation string
+	// err = workflow.ExecuteActivity(ctx, SendThankYouToCustomer, input).Get(ctx, &notifyConfirmation)
+	// if err != nil {
+	// 	return "", err
+	// }
+
 	for period := 1; period <= input.NumberOfPeriods; period++ {
 
 		chargeInput := ChargeInput{
@@ -37,10 +45,11 @@ func LoanProcessingWorkflow(ctx workflow.Context, input CustomerInfo) (string, e
 		logger.Info("Payment complete", "Period", period, "Total Paid", totalPaid)
 
 		// using 3 seconds instead of 30 days for faster results
-		workflow.Sleep(ctx, time.Second*3)
+		workflow.Sleep(ctx, time.Minute*1)
 	}
 
 	// for workflow executions started after the change, send thank you after the loop
+	// TODO B: Uncomment this and comment out the identical block above the loop
 	var notifyConfirmation string
 	err = workflow.ExecuteActivity(ctx, SendThankYouToCustomer, input).Get(ctx, &notifyConfirmation)
 	if err != nil {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	loanprocess "temporal-versioning/exercises/version-workflow/solution"
+	loanprocess "worker-versioning/exercises/worker-versioning/solution"
 
 	"go.temporal.io/sdk/client"
 )

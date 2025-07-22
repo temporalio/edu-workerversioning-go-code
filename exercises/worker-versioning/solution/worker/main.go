@@ -2,10 +2,11 @@ package main
 
 import (
 	"log"
-	loanprocess "temporal-versioning/exercises/version-workflow/solution"
+	loanprocess "worker-versioning/exercises/worker-versioning/solution"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 )
 
 func main() {
@@ -15,7 +16,16 @@ func main() {
 	}
 	defer c.Close()
 
-	w := worker.New(c, loanprocess.TaskQueueName, worker.Options{})
+	w := worker.New(c, loanprocess.TaskQueueName, worker.Options{
+		DeploymentOptions: worker.DeploymentOptions{
+			UseVersioning: true,
+			Version: worker.WorkerDeploymentVersion{
+				DeploymentName: "worker_versioning_demo",
+				BuildId:        "2.0",
+			},
+			DefaultVersioningBehavior: workflow.VersioningBehaviorPinned,
+		},
+	})
 
 	w.RegisterWorkflow(loanprocess.LoanProcessingWorkflow)
 	w.RegisterActivity(loanprocess.ChargeCustomer)
