@@ -19,11 +19,12 @@ func LoanProcessingWorkflow(ctx workflow.Context, input CustomerInfo) (string, e
 	var err error
 
 	// for workflow executions started before the change, send thank you before the loop
-	// var notifyConfirmation string
-	// err = workflow.ExecuteActivity(ctx, SendThankYouToCustomer, input).Get(ctx, &notifyConfirmation)
-	// if err != nil {
-	// 	return "", err
-	// }
+	// TODO Part B: Comment this out and uncomment the identical block below the loop
+	var notifyConfirmation string
+	err = workflow.ExecuteActivity(ctx, SendThankYouToCustomer, input).Get(ctx, &notifyConfirmation)
+	if err != nil {
+		return "", err
+	}
 
 	for period := 1; period <= input.NumberOfPeriods; period++ {
 
@@ -47,11 +48,12 @@ func LoanProcessingWorkflow(ctx workflow.Context, input CustomerInfo) (string, e
 	}
 
 	// for workflow executions started after the change, send thank you after the loop
-	var notifyConfirmation string
-	err = workflow.ExecuteActivity(ctx, SendThankYouToCustomer, input).Get(ctx, &notifyConfirmation)
-	if err != nil {
-		return "", err
-	}
+	// TODO Part B: Uncomment this and comment out the identical block above the loop
+	// var notifyConfirmation string
+	// err = workflow.ExecuteActivity(ctx, SendThankYouToCustomer, input).Get(ctx, &notifyConfirmation)
+	// if err != nil {
+	// 	return "", err
+	// }
 
 	result := fmt.Sprintf("Loan for customer '%s' has been fully paid (total=%d)", input.CustomerID, totalPaid)
 	return result, nil
